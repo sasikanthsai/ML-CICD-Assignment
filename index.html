@@ -4,524 +4,2491 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ML CI/CD Dashboard</title>
+    <title>ML CI/CD | Sasikanthsai Yemineni</title>
+
+    <meta
+        name="description"
+        content="Machine Learning CI/CD Pipeline Dashboard - Sasikanthsai Yemineni - VFSTR"
+    >
 
     <style>
+        /* =========================================================
+           GLOBAL
+        ========================================================= */
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            color: #f5f7ff;
             background:
-                radial-gradient(circle at 15% 20%, rgba(0, 255, 200, 0.12), transparent 30%),
-                radial-gradient(circle at 85% 10%, rgba(120, 80, 255, 0.18), transparent 35%),
-                linear-gradient(135deg, #050816, #0b1026 50%, #060812);
-            color: white;
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(0, 255, 204, 0.10),
+                    transparent 25%
+                ),
+                radial-gradient(
+                    circle at 90% 15%,
+                    rgba(125, 92, 255, 0.16),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 50% 100%,
+                    rgba(0, 183, 255, 0.08),
+                    transparent 35%
+                ),
+                #050816;
+
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Background particles */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(
+                    rgba(255,255,255,0.025) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,0.025) 1px,
+                    transparent 1px
+                );
+
+            background-size: 55px 55px;
+            mask-image: linear-gradient(
+                to bottom,
+                black,
+                transparent 90%
+            );
+
+            z-index: 0;
+        }
+
+        ::selection {
+            background: rgba(0, 255, 204, 0.3);
+        }
+
+        .page {
+            position: relative;
+            z-index: 2;
+            width: min(1250px, 92%);
+            margin: auto;
+        }
+
+
+        /* =========================================================
+           FLOATING ORBS
+        ========================================================= */
+
         .orb {
             position: fixed;
             border-radius: 50%;
-            filter: blur(1px);
-            opacity: 0.35;
             pointer-events: none;
+            z-index: 0;
+            filter: blur(2px);
+            opacity: 0.35;
         }
 
-        .orb.one {
+        .orb-1 {
+            width: 240px;
+            height: 240px;
+            background: #00ffd5;
+            top: 10%;
+            left: -150px;
+            animation: floatOne 9s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: #7857ff;
+            right: -180px;
+            top: 45%;
+            animation: floatTwo 12s ease-in-out infinite;
+        }
+
+        .orb-3 {
             width: 180px;
             height: 180px;
-            background: #00ffd5;
-            top: 15%;
-            left: -70px;
-            animation: float 7s infinite ease-in-out;
+            background: #00aaff;
+            bottom: 5%;
+            left: 20%;
+            animation: floatThree 10s ease-in-out infinite;
         }
 
-        .orb.two {
-            width: 220px;
-            height: 220px;
-            background: #754cff;
-            right: -80px;
-            bottom: 10%;
-            animation: float 9s infinite ease-in-out reverse;
-        }
-
-        @keyframes float {
+        @keyframes floatOne {
             50% {
-                transform: translateY(-35px) translateX(25px);
+                transform: translate(80px, -40px);
             }
         }
 
-        .container {
-            width: min(1200px, 92%);
-            margin: auto;
-            padding: 35px 0 60px;
-            position: relative;
-            z-index: 2;
+        @keyframes floatTwo {
+            50% {
+                transform: translate(-70px, 60px);
+            }
         }
 
-        /* Header */
-        header {
+        @keyframes floatThree {
+            50% {
+                transform: translate(100px, -50px);
+            }
+        }
+
+
+        /* =========================================================
+           NAVBAR
+        ========================================================= */
+
+        nav {
+            position: sticky;
+            top: 15px;
+            z-index: 100;
+
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 45px;
+            justify-content: space-between;
+
+            margin-top: 20px;
+            padding: 13px 17px;
+
+            background: rgba(7, 11, 28, 0.72);
+            border: 1px solid rgba(255,255,255,0.09);
+            backdrop-filter: blur(20px);
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 15px 50px rgba(0,0,0,0.25);
         }
 
-        .logo {
+        .brand {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .logo-icon {
-            width: 48px;
-            height: 48px;
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+
             display: grid;
             place-items: center;
-            border-radius: 15px;
-            background: linear-gradient(135deg, #00ffd5, #755cff);
-            font-size: 23px;
-            box-shadow: 0 0 30px rgba(0,255,213,.25);
+
+            border-radius: 13px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #00ffd5,
+                    #745cff
+                );
+
+            color: #050816;
+            font-weight: 900;
+
+            box-shadow:
+                0 0 30px rgba(0,255,213,0.25);
         }
 
-        .logo h2 {
-            font-size: 20px;
+        .brand-text strong {
+            display: block;
+            font-size: 14px;
             letter-spacing: 1px;
         }
 
-        .status {
-            padding: 10px 18px;
-            border: 1px solid rgba(0,255,180,.35);
-            border-radius: 30px;
-            background: rgba(0,255,180,.08);
-            color: #63ffca;
-            font-size: 14px;
+        .brand-text span {
+            display: block;
+            color: #75809c;
+            font-size: 10px;
+            margin-top: 2px;
         }
 
-        /* Hero */
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            color: #9da8c0;
+            text-decoration: none;
+            font-size: 12px;
+
+            padding: 9px 12px;
+            border-radius: 10px;
+
+            transition: 0.25s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+            background: rgba(255,255,255,0.07);
+        }
+
+        .live-pill {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            padding: 8px 12px;
+            border-radius: 20px;
+
+            background: rgba(0,255,180,0.08);
+            border: 1px solid rgba(0,255,180,0.22);
+
+            color: #62ffd0;
+            font-size: 11px;
+        }
+
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #52ffcb;
+
+            box-shadow:
+                0 0 12px #52ffcb;
+
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            50% {
+                opacity: 0.35;
+                transform: scale(0.65);
+            }
+        }
+
+
+        /* =========================================================
+           HERO
+        ========================================================= */
+
         .hero {
-            text-align: center;
-            margin-bottom: 45px;
+            min-height: 680px;
+
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            align-items: center;
+
+            gap: 60px;
+            padding: 85px 0 65px;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 8px 15px;
+        .hero-left {
+            animation: reveal 0.9s ease both;
+        }
+
+        @keyframes reveal {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+
+            padding: 9px 14px;
+
             border-radius: 30px;
-            background: rgba(117,92,255,.12);
-            border: 1px solid rgba(117,92,255,.35);
-            color: #bdb1ff;
-            margin-bottom: 18px;
-            font-size: 13px;
+
+            background: rgba(117,92,255,0.10);
+            border: 1px solid rgba(117,92,255,0.25);
+
+            color: #bdb5ff;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+
+            margin-bottom: 24px;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #a995ff;
+            box-shadow: 0 0 12px #8b72ff;
         }
 
         .hero h1 {
-            font-size: clamp(40px, 7vw, 76px);
-            line-height: 1;
-            margin-bottom: 20px;
-            background: linear-gradient(90deg, #ffffff, #74ffe4, #a999ff);
+            font-size: clamp(45px, 6vw, 78px);
+            line-height: 0.98;
+            letter-spacing: -3px;
+            margin-bottom: 25px;
+        }
+
+        .gradient-text {
+            background:
+                linear-gradient(
+                    90deg,
+                    #ffffff,
+                    #71ffe0,
+                    #a38cff
+                );
+
             -webkit-background-clip: text;
+            background-clip: text;
             color: transparent;
         }
 
-        .hero p {
-            color: #aeb8d0;
-            max-width: 700px;
-            margin: auto;
-            line-height: 1.7;
-            font-size: 17px;
-        }
+        .hero-description {
+            color: #9da8c0;
+            max-width: 650px;
 
-        /* Cards */
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
+            line-height: 1.8;
+            font-size: 16px;
+
             margin-bottom: 30px;
         }
 
-        .card {
-            background: rgba(255,255,255,.045);
-            border: 1px solid rgba(255,255,255,.09);
-            border-radius: 22px;
-            padding: 25px;
-            backdrop-filter: blur(18px);
-            box-shadow: 0 20px 60px rgba(0,0,0,.22);
-            transition: .3s ease;
+        .student-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 17px;
+
+            padding: 15px 19px;
+
+            border-radius: 17px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(255,255,255,0.07),
+                    rgba(255,255,255,0.025)
+                );
+
+            border: 1px solid rgba(255,255,255,0.10);
+
+            box-shadow:
+                0 20px 60px rgba(0,0,0,0.2);
         }
 
-        .card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(0,255,213,.35);
-            box-shadow: 0 20px 70px rgba(0,255,213,.08);
-        }
+        .student-avatar {
+            width: 48px;
+            height: 48px;
 
-        .card .icon {
-            font-size: 25px;
-            margin-bottom: 18px;
-        }
+            border-radius: 14px;
 
-        .card .label {
-            color: #8995b2;
-            font-size: 13px;
-            margin-bottom: 9px;
-        }
-
-        .card h3 {
-            font-size: 21px;
-        }
-
-        /* Main grid */
-        .main-grid {
             display: grid;
-            grid-template-columns: 1.25fr .75fr;
-            gap: 22px;
+            place-items: center;
+
+            font-size: 18px;
+            font-weight: 800;
+
+            color: #051019;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #00ffd5,
+                    #68cfff
+                );
+        }
+
+        .student-info strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .student-info span {
+            display: block;
+            color: #7e8ba6;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 12px 17px;
+
+            border-radius: 12px;
+
+            text-decoration: none;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            transition: 0.25s;
+        }
+
+        .btn-primary {
+            color: #041015;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #00ffd5,
+                    #73e9ff
+                );
+
+            box-shadow:
+                0 12px 30px rgba(0,255,213,0.15);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            color: #dce3f2;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.10);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.09);
+        }
+
+
+        /* =========================================================
+           HERO VISUAL
+        ========================================================= */
+
+        .hero-visual {
+            position: relative;
+            min-height: 450px;
+
+            display: grid;
+            place-items: center;
+        }
+
+        .visual-ring {
+            position: absolute;
+
+            width: 370px;
+            height: 370px;
+
+            border-radius: 50%;
+
+            border:
+                1px solid rgba(0,255,213,0.13);
+
+            animation: rotate 20s linear infinite;
+        }
+
+        .visual-ring::before,
+        .visual-ring::after {
+            content: "";
+
+            position: absolute;
+
+            border-radius: 50%;
+
+            border: 1px solid rgba(117,92,255,0.15);
+        }
+
+        .visual-ring::before {
+            inset: 35px;
+        }
+
+        .visual-ring::after {
+            inset: 75px;
+        }
+
+        @keyframes rotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .model-orb {
+            width: 220px;
+            height: 220px;
+
+            border-radius: 50%;
+
+            display: grid;
+            place-items: center;
+
+            position: relative;
+
+            background:
+                radial-gradient(
+                    circle at 30% 25%,
+                    #86fff0,
+                    #00b99a 22%,
+                    #5537bb 65%,
+                    #16112e
+                );
+
+            box-shadow:
+                0 0 70px rgba(0,255,213,0.18),
+                inset -25px -25px 60px rgba(0,0,0,0.4);
+
+            animation: orbFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes orbFloat {
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        .model-orb span {
+            font-size: 62px;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
+        }
+
+        .orbit-dot {
+            position: absolute;
+
+            width: 12px;
+            height: 12px;
+
+            border-radius: 50%;
+
+            background: #62ffe0;
+
+            box-shadow:
+                0 0 20px #62ffe0;
+        }
+
+        .dot-one {
+            top: 35px;
+            right: 80px;
+        }
+
+        .dot-two {
+            bottom: 55px;
+            left: 45px;
+            background: #a38cff;
+            box-shadow: 0 0 20px #a38cff;
+        }
+
+        .dot-three {
+            top: 80px;
+            left: 25px;
+            background: #68cfff;
+            box-shadow: 0 0 20px #68cfff;
+        }
+
+
+        /* =========================================================
+           SECTION
+        ========================================================= */
+
+        section {
+            scroll-margin-top: 100px;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .section-heading small {
+            color: #69ffe0;
+            letter-spacing: 2px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .section-heading h2 {
+            margin-top: 9px;
+            font-size: 32px;
+        }
+
+        .section-heading p {
+            color: #7f8aa5;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+
+        /* =========================================================
+           METRIC CARDS
+        ========================================================= */
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+
+            margin-bottom: 70px;
+        }
+
+        .metric-card {
+            padding: 24px;
+
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,0.065),
+                    rgba(255,255,255,0.025)
+                );
+
+            border: 1px solid rgba(255,255,255,0.09);
+
+            backdrop-filter: blur(18px);
+
+            transition: 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-7px);
+
+            border-color:
+                rgba(0,255,213,0.30);
+
+            box-shadow:
+                0 20px 60px rgba(0,0,0,0.25);
+        }
+
+        .metric-icon {
+            font-size: 24px;
+            margin-bottom: 17px;
+        }
+
+        .metric-label {
+            color: #78849e;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            font-size: 20px;
+            font-weight: 800;
+            margin-top: 7px;
+        }
+
+
+        /* =========================================================
+           PERFORMANCE SECTION
+        ========================================================= */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+
+            margin-bottom: 70px;
         }
 
         .panel {
-            background: rgba(255,255,255,.045);
-            border: 1px solid rgba(255,255,255,.09);
-            border-radius: 26px;
             padding: 30px;
+
+            border-radius: 25px;
+
+            background:
+                rgba(255,255,255,0.045);
+
+            border: 1px solid rgba(255,255,255,0.085);
+
             backdrop-filter: blur(18px);
+
+            box-shadow:
+                0 25px 80px rgba(0,0,0,0.20);
         }
 
-        .panel-title {
+        .panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+
             margin-bottom: 28px;
         }
 
-        .panel-title h2 {
-            font-size: 20px;
-        }
-
-        .panel-title span {
-            color: #75819c;
-            font-size: 12px;
-        }
-
-        /* Accuracy */
-        .accuracy-area {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-        }
-
-        .circle {
-            width: 240px;
-            height: 240px;
-            border-radius: 50%;
-            background:
-                radial-gradient(circle at center, #10172d 62%, transparent 63%),
-                conic-gradient(#00ffd5 0deg 331deg, rgba(255,255,255,.08) 331deg 360deg);
-            display: grid;
-            place-items: center;
-            box-shadow:
-                0 0 50px rgba(0,255,213,.12),
-                inset 0 0 30px rgba(0,0,0,.4);
-        }
-
-        .accuracy-number {
-            text-align: center;
-        }
-
-        .accuracy-number strong {
-            display: block;
-            font-size: 46px;
-        }
-
-        .accuracy-number small {
-            color: #8190ad;
-        }
-
-        /* Pipeline */
-        .pipeline {
-            display: flex;
-            flex-direction: column;
-            gap: 17px;
-        }
-
-        .step {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            border-radius: 16px;
-            background: rgba(255,255,255,.035);
-            border: 1px solid rgba(255,255,255,.07);
-        }
-
-        .step-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            background: rgba(0,255,213,.1);
-            color: #59ffd1;
-            border: 1px solid rgba(0,255,213,.25);
-        }
-
-        .step strong {
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .step span {
-            color: #7885a1;
-            font-size: 12px;
-        }
-
-        .check {
-            margin-left: auto;
-            color: #59ffd1;
+        .panel-header h3 {
             font-size: 18px;
         }
 
-        /* Tech stack */
-        .tech {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 20px;
+        .panel-header span {
+            color: #66728e;
+            font-size: 10px;
+            letter-spacing: 1px;
         }
 
-        .tech span {
-            padding: 9px 13px;
-            border-radius: 12px;
-            background: rgba(117,92,255,.1);
-            border: 1px solid rgba(117,92,255,.22);
-            color: #c4bcff;
+
+        /* Accuracy */
+
+        .accuracy-layout {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 35px;
+        }
+
+        .accuracy-ring {
+            width: 215px;
+            height: 215px;
+
+            border-radius: 50%;
+
+            display: grid;
+            place-items: center;
+
+            background:
+                conic-gradient(
+                    #00ffd5 0deg 336deg,
+                    rgba(255,255,255,0.07) 336deg 360deg
+                );
+
+            position: relative;
+
+            box-shadow:
+                0 0 45px rgba(0,255,213,0.10);
+        }
+
+        .accuracy-ring::before {
+            content: "";
+
+            position: absolute;
+            inset: 15px;
+
+            border-radius: 50%;
+
+            background: #0b1024;
+
+            border:
+                1px solid rgba(255,255,255,0.05);
+        }
+
+        .accuracy-content {
+            position: relative;
+            text-align: center;
+        }
+
+        .accuracy-content strong {
+            display: block;
+            font-size: 40px;
+        }
+
+        .accuracy-content span {
+            color: #77849f;
+            font-size: 11px;
+        }
+
+        .accuracy-details {
+            display: grid;
+            gap: 13px;
+        }
+
+        .detail-line {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+
+            color: #8d99b2;
             font-size: 12px;
         }
 
-        /* Footer */
+        .detail-line strong {
+            color: white;
+        }
+
+
+        /* =========================================================
+           PIPELINE
+        ========================================================= */
+
+        .pipeline {
+            display: grid;
+            gap: 13px;
+        }
+
+        .pipeline-step {
+            position: relative;
+
+            display: flex;
+            align-items: center;
+            gap: 14px;
+
+            padding: 15px;
+
+            border-radius: 15px;
+
+            background:
+                rgba(255,255,255,0.035);
+
+            border:
+                1px solid rgba(255,255,255,0.06);
+
+            transition: 0.25s;
+        }
+
+        .pipeline-step:hover {
+            background:
+                rgba(0,255,213,0.055);
+
+            transform: translateX(5px);
+        }
+
+        .step-number {
+            width: 38px;
+            height: 38px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 12px;
+
+            background:
+                rgba(0,255,213,0.09);
+
+            border:
+                1px solid rgba(0,255,213,0.18);
+
+            color: #60ffd2;
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .pipeline-info strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .pipeline-info span {
+            display: block;
+
+            color: #68748e;
+
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        .success {
+            margin-left: auto;
+
+            color: #62ffd0;
+
+            font-size: 17px;
+        }
+
+
+        /* =========================================================
+           DATASET
+        ========================================================= */
+
+        .dataset-grid {
+            display: grid;
+            grid-template-columns: 0.8fr 1.2fr;
+            gap: 20px;
+
+            margin-bottom: 70px;
+        }
+
+        .dataset-visual {
+            min-height: 320px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            border-radius: 25px;
+
+            padding: 30px;
+
+            background:
+                radial-gradient(
+                    circle at 80% 20%,
+                    rgba(117,92,255,0.22),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,0.065),
+                    rgba(255,255,255,0.025)
+                );
+
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .flower {
+            font-size: 72px;
+            margin-bottom: 18px;
+
+            filter:
+                drop-shadow(
+                    0 15px 25px rgba(0,0,0,0.3)
+                );
+        }
+
+        .dataset-visual h3 {
+            font-size: 27px;
+        }
+
+        .dataset-visual p {
+            color: #7c88a2;
+            font-size: 12px;
+            line-height: 1.7;
+            margin-top: 10px;
+        }
+
+        .data-bars {
+            display: grid;
+            gap: 18px;
+        }
+
+        .data-bar {
+            display: grid;
+            gap: 8px;
+        }
+
+        .bar-top {
+            display: flex;
+            justify-content: space-between;
+
+            font-size: 11px;
+        }
+
+        .bar-top span {
+            color: #8591aa;
+        }
+
+        .bar-top strong {
+            color: #dce4f4;
+        }
+
+        .bar-track {
+            height: 8px;
+
+            border-radius: 20px;
+
+            background:
+                rgba(255,255,255,0.07);
+
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+
+            border-radius: inherit;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #00ffd5,
+                    #7d65ff
+                );
+
+            box-shadow:
+                0 0 15px rgba(0,255,213,0.25);
+        }
+
+
+        /* =========================================================
+           TECHNOLOGIES
+        ========================================================= */
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+
+            margin-bottom: 70px;
+        }
+
+        .tech-card {
+            text-align: center;
+
+            padding: 23px 15px;
+
+            border-radius: 18px;
+
+            background:
+                rgba(255,255,255,0.04);
+
+            border:
+                1px solid rgba(255,255,255,0.08);
+
+            transition: 0.3s;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-6px);
+
+            background:
+                rgba(117,92,255,0.08);
+        }
+
+        .tech-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .tech-card strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .tech-card span {
+            display: block;
+            color: #68748e;
+            font-size: 9px;
+            margin-top: 5px;
+        }
+
+
+        /* =========================================================
+           ARCHITECTURE
+        ========================================================= */
+
+        .architecture {
+            margin-bottom: 70px;
+        }
+
+        .architecture-flow {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+
+            align-items: center;
+        }
+
+        .architecture-box {
+            text-align: center;
+
+            padding: 25px 12px;
+
+            min-height: 130px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,0.06),
+                    rgba(255,255,255,0.025)
+                );
+
+            border:
+                1px solid rgba(255,255,255,0.08);
+        }
+
+        .architecture-box .big {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .architecture-box strong {
+            font-size: 11px;
+        }
+
+        .architecture-box span {
+            color: #6f7b96;
+            font-size: 9px;
+            margin-top: 5px;
+        }
+
+        .arrow {
+            text-align: center;
+            color: #53ffd0;
+            font-size: 22px;
+        }
+
+
+        /* =========================================================
+           STATUS BANNER
+        ========================================================= */
+
+        .success-banner {
+            padding: 28px;
+
+            border-radius: 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
+
+            margin-bottom: 60px;
+
+            background:
+                linear-gradient(
+                    100deg,
+                    rgba(0,255,213,0.10),
+                    rgba(117,92,255,0.08)
+                );
+
+            border:
+                1px solid rgba(0,255,213,0.18);
+
+            box-shadow:
+                0 25px 70px rgba(0,0,0,0.18);
+        }
+
+        .success-banner-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .success-icon {
+            width: 52px;
+            height: 52px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 16px;
+
+            background:
+                rgba(0,255,213,0.10);
+
+            border:
+                1px solid rgba(0,255,213,0.25);
+
+            color: #5dffd0;
+
+            font-size: 23px;
+        }
+
+        .success-banner strong {
+            display: block;
+            font-size: 15px;
+        }
+
+        .success-banner span {
+            display: block;
+
+            color: #7885a0;
+
+            font-size: 11px;
+
+            margin-top: 5px;
+        }
+
+        .deployment-badge {
+            padding: 10px 15px;
+
+            border-radius: 30px;
+
+            background:
+                rgba(0,255,180,0.09);
+
+            border:
+                1px solid rgba(0,255,180,0.22);
+
+            color: #62ffd0;
+
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
         footer {
             text-align: center;
-            color: #65718c;
-            margin-top: 40px;
-            font-size: 13px;
+
+            padding: 45px 0 55px;
+
+            border-top:
+                1px solid rgba(255,255,255,0.06);
+
+            color: #59657e;
+
+            font-size: 11px;
+
+            line-height: 1.8;
         }
 
         footer strong {
-            color: #9aa7c2;
+            color: #9ca8c0;
         }
 
-        @media (max-width: 900px) {
-            .cards {
+        .footer-name {
+            font-size: 15px;
+            color: #e8edf8;
+            margin-bottom: 5px;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 1000px) {
+
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-description {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .student-card,
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-visual {
+                min-height: 380px;
+            }
+
+            .metrics {
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .main-grid {
+            .tech-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .architecture-flow {
                 grid-template-columns: 1fr;
+            }
+
+            .arrow {
+                transform: rotate(90deg);
             }
         }
 
-        @media (max-width: 550px) {
-            header {
-                align-items: flex-start;
-                gap: 15px;
-                flex-direction: column;
+
+        @media (max-width: 750px) {
+
+            .nav-links {
+                display: none;
             }
 
-            .cards {
+            .dashboard-grid,
+            .dataset-grid {
                 grid-template-columns: 1fr;
             }
 
-            .circle {
-                width: 200px;
-                height: 200px;
+            .accuracy-layout {
+                flex-direction: column;
+            }
+
+            .success-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .tech-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+
+        @media (max-width: 500px) {
+
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding-top: 55px;
+            }
+
+            .hero h1 {
+                font-size: 43px;
+                letter-spacing: -2px;
+            }
+
+            .student-card {
+                width: 100%;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+
+            .visual-ring {
+                width: 290px;
+                height: 290px;
+            }
+
+            .model-orb {
+                width: 175px;
+                height: 175px;
+            }
+
+            .model-orb span {
+                font-size: 48px;
             }
         }
     </style>
 </head>
 
+
 <body>
 
-    <div class="orb one"></div>
-    <div class="orb two"></div>
+    <!-- Floating background graphics -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
 
-    <div class="container">
 
-        <header>
-            <div class="logo">
-                <div class="logo-icon">⚡</div>
-                <h2>ML CI/CD LAB</h2>
+    <div class="page">
+
+        <!-- =====================================================
+             NAVBAR
+        ====================================================== -->
+
+        <nav>
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    ML
+                </div>
+
+                <div class="brand-text">
+                    <strong>ML CI/CD LAB</strong>
+                    <span>Machine Learning Automation</span>
+                </div>
+
             </div>
 
-            <div class="status">
-                ● PIPELINE READY
+
+            <div class="nav-links">
+
+                <a href="#performance">
+                    Performance
+                </a>
+
+                <a href="#dataset">
+                    Dataset
+                </a>
+
+                <a href="#pipeline">
+                    Pipeline
+                </a>
+
+                <a href="#technologies">
+                    Technologies
+                </a>
+
             </div>
-        </header>
+
+
+            <div class="live-pill">
+
+                <div class="live-dot"></div>
+
+                DEPLOYED
+
+            </div>
+
+        </nav>
+
+
+        <!-- =====================================================
+             HERO
+        ====================================================== -->
 
         <section class="hero">
 
-            <div class="badge">
-                MACHINE LEARNING • AUTOMATED DEPLOYMENT
-            </div>
+            <div class="hero-left">
 
-            <h1>ML Pipeline<br>Dashboard</h1>
-
-            <p>
-                An automated machine learning workflow powered by
-                Python, Scikit-Learn, Pytest and GitHub Actions.
-            </p>
-
-        </section>
-
-        <!-- Information Cards -->
-
-        <section class="cards">
-
-            <div class="card">
-                <div class="icon">🤖</div>
-                <div class="label">MODEL</div>
-                <h3>Random Forest</h3>
-            </div>
-
-            <div class="card">
-                <div class="icon">🌸</div>
-                <div class="label">DATASET</div>
-                <h3>Iris Dataset</h3>
-            </div>
-
-            <div class="card">
-                <div class="icon">🧪</div>
-                <div class="label">TESTING</div>
-                <h3>Pytest</h3>
-            </div>
-
-            <div class="card">
-                <div class="icon">🚀</div>
-                <div class="label">DEPLOYMENT</div>
-                <h3>GitHub Pages</h3>
-            </div>
-
-        </section>
-
-        <section class="main-grid">
-
-            <!-- Accuracy -->
-
-            <div class="panel">
-
-                <div class="panel-title">
-                    <h2>Model Performance</h2>
-                    <span>TEST ACCURACY</span>
+                <div class="eyebrow">
+                    ML CI/CD ASSIGNMENT
                 </div>
 
-                <div class="accuracy-area">
 
-                    <div class="circle">
+                <h1>
 
-                        <div class="accuracy-number">
-                            <strong>93.33%</strong>
-                            <small>Accuracy</small>
-                        </div>
+                    <span class="gradient-text">
+                        Machine Learning
+                    </span>
+
+                    <br>
+
+                    CI/CD Pipeline
+
+                </h1>
+
+
+                <p class="hero-description">
+
+                    A complete automated machine learning workflow
+                    using Python, Scikit-Learn, Pytest and GitHub
+                    Actions — from model training and testing to
+                    continuous deployment.
+
+                </p>
+
+
+                <!-- Student Information -->
+
+                <div class="student-card">
+
+                    <div class="student-avatar">
+                        SY
+                    </div>
+
+                    <div class="student-info">
+
+                        <strong>
+                            Sasikanthsai Yemineni
+                        </strong>
+
+                        <span>
+                            Register No: 231FA04155
+                        </span>
+
+                        <span>
+                            Vignan’s Foundation for Science,
+                            Technology & Research (VFSTR)
+                        </span>
 
                     </div>
 
                 </div>
 
-                <div class="tech">
 
-                    <span>Python</span>
-                    <span>Scikit-Learn</span>
-                    <span>Random Forest</span>
-                    <span>Iris</span>
+                <div class="hero-buttons">
+
+                    <a
+                        class="btn btn-primary"
+                        href="#performance"
+                    >
+                        Explore Dashboard →
+                    </a>
+
+                    <a
+                        class="btn btn-secondary"
+                        href="#pipeline"
+                    >
+                        View Pipeline
+                    </a>
 
                 </div>
 
             </div>
 
-            <!-- Pipeline -->
 
-            <div class="panel">
+            <!-- Animated ML Visual -->
 
-                <div class="panel-title">
-                    <h2>CI/CD Pipeline</h2>
-                    <span>STATUS</span>
+            <div class="hero-visual">
+
+                <div class="visual-ring"></div>
+
+                <div class="model-orb">
+                    <span>🤖</span>
                 </div>
 
-                <div class="pipeline">
-
-                    <div class="step">
-                        <div class="step-icon">✓</div>
-
-                        <div>
-                            <strong>Checkout</strong>
-                            <span>Source code retrieved</span>
-                        </div>
-
-                        <div class="check">✓</div>
-                    </div>
-
-                    <div class="step">
-                        <div class="step-icon">✓</div>
-
-                        <div>
-                            <strong>Python Setup</strong>
-                            <span>Environment configured</span>
-                        </div>
-
-                        <div class="check">✓</div>
-                    </div>
-
-                    <div class="step">
-                        <div class="step-icon">✓</div>
-
-                        <div>
-                            <strong>Install Dependencies</strong>
-                            <span>Packages installed</span>
-                        </div>
-
-                        <div class="check">✓</div>
-                    </div>
-
-                    <div class="step">
-                        <div class="step-icon">✓</div>
-
-                        <div>
-                            <strong>ML Tests</strong>
-                            <span>Pytest execution</span>
-                        </div>
-
-                        <div class="check">✓</div>
-                    </div>
-
-                    <div class="step">
-                        <div class="step-icon">🚀</div>
-
-                        <div>
-                            <strong>Deployment</strong>
-                            <span>GitHub Pages</span>
-                        </div>
-
-                        <div class="check">✓</div>
-                    </div>
-
-                </div>
+                <div class="orbit-dot dot-one"></div>
+                <div class="orbit-dot dot-two"></div>
+                <div class="orbit-dot dot-three"></div>
 
             </div>
 
         </section>
+
+
+        <!-- =====================================================
+             PROJECT OVERVIEW
+        ====================================================== -->
+
+        <section>
+
+            <div class="section-heading">
+
+                <small>
+                    PROJECT OVERVIEW
+                </small>
+
+                <h2>
+                    ML System at a Glance
+                </h2>
+
+                <p>
+                    Key components of the implemented machine learning workflow.
+                </p>
+
+            </div>
+
+
+            <div class="metrics">
+
+                <div class="metric-card">
+
+                    <div class="metric-icon">
+                        🤖
+                    </div>
+
+                    <div class="metric-label">
+                        Machine Learning Model
+                    </div>
+
+                    <div class="metric-value">
+                        Random Forest
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-icon">
+                        🌸
+                    </div>
+
+                    <div class="metric-label">
+                        Dataset
+                    </div>
+
+                    <div class="metric-value">
+                        Iris Dataset
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-icon">
+                        🧪
+                    </div>
+
+                    <div class="metric-label">
+                        Automated Testing
+                    </div>
+
+                    <div class="metric-value">
+                        Pytest
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-icon">
+                        🚀
+                    </div>
+
+                    <div class="metric-label">
+                        Deployment
+                    </div>
+
+                    <div class="metric-value">
+                        GitHub Pages
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             PERFORMANCE + PIPELINE
+        ====================================================== -->
+
+        <section id="performance">
+
+            <div class="section-heading">
+
+                <small>
+                    MODEL PERFORMANCE
+                </small>
+
+                <h2>
+                    Performance & Automation
+                </h2>
+
+                <p>
+                    Model evaluation and automated CI/CD execution.
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-grid">
+
+
+                <!-- Accuracy Panel -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h3>
+                            Model Accuracy
+                        </h3>
+
+                        <span>
+                            TEST RESULT
+                        </span>
+
+                    </div>
+
+
+                    <div class="accuracy-layout">
+
+                        <div class="accuracy-ring">
+
+                            <div class="accuracy-content">
+
+                                <strong>
+                                    93.33%
+                                </strong>
+
+                                <span>
+                                    TEST ACCURACY
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="accuracy-details">
+
+                            <div class="detail-line">
+
+                                <span>
+                                    Algorithm
+                                </span>
+
+                                <strong>
+                                    Random Forest
+                                </strong>
+
+                            </div>
+
+
+                            <div class="detail-line">
+
+                                <span>
+                                    Dataset
+                                </span>
+
+                                <strong>
+                                    Iris
+                                </strong>
+
+                            </div>
+
+
+                            <div class="detail-line">
+
+                                <span>
+                                    Test Split
+                                </span>
+
+                                <strong>
+                                    20%
+                                </strong>
+
+                            </div>
+
+
+                            <div class="detail-line">
+
+                                <span>
+                                    Estimators
+                                </span>
+
+                                <strong>
+                                    100
+                                </strong>
+
+                            </div>
+
+
+                            <div class="detail-line">
+
+                                <span>
+                                    Testing
+                                </span>
+
+                                <strong>
+                                    Pytest ✓
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Pipeline Panel -->
+
+                <div class="panel" id="pipeline">
+
+                    <div class="panel-header">
+
+                        <h3>
+                            CI/CD Pipeline
+                        </h3>
+
+                        <span>
+                            ALL STAGES
+                        </span>
+
+                    </div>
+
+
+                    <div class="pipeline">
+
+                        <div class="pipeline-step">
+
+                            <div class="step-number">
+                                01
+                            </div>
+
+                            <div class="pipeline-info">
+
+                                <strong>
+                                    Checkout Source Code
+                                </strong>
+
+                                <span>
+                                    GitHub Actions retrieves repository
+                                </span>
+
+                            </div>
+
+                            <div class="success">
+                                ✓
+                            </div>
+
+                        </div>
+
+
+                        <div class="pipeline-step">
+
+                            <div class="step-number">
+                                02
+                            </div>
+
+                            <div class="pipeline-info">
+
+                                <strong>
+                                    Python Environment
+                                </strong>
+
+                                <span>
+                                    Python 3.11 environment configured
+                                </span>
+
+                            </div>
+
+                            <div class="success">
+                                ✓
+                            </div>
+
+                        </div>
+
+
+                        <div class="pipeline-step">
+
+                            <div class="step-number">
+                                03
+                            </div>
+
+                            <div class="pipeline-info">
+
+                                <strong>
+                                    Install Dependencies
+                                </strong>
+
+                                <span>
+                                    Scikit-Learn and Pytest installed
+                                </span>
+
+                            </div>
+
+                            <div class="success">
+                                ✓
+                            </div>
+
+                        </div>
+
+
+                        <div class="pipeline-step">
+
+                            <div class="step-number">
+                                04
+                            </div>
+
+                            <div class="pipeline-info">
+
+                                <strong>
+                                    Train & Run ML Model
+                                </strong>
+
+                                <span>
+                                    Iris classification model executed
+                                </span>
+
+                            </div>
+
+                            <div class="success">
+                                ✓
+                            </div>
+
+                        </div>
+
+
+                        <div class="pipeline-step">
+
+                            <div class="step-number">
+                                05
+                            </div>
+
+                            <div class="pipeline-info">
+
+                                <strong>
+                                    Automated Testing
+                                </strong>
+
+                                <span>
+                                    Pytest validation completed
+                                </span>
+
+                            </div>
+
+                            <div class="success">
+                                ✓
+                            </div>
+
+                        </div>
+
+
+                        <div class="pipeline-step">
+
+                            <div class="step-number">
+                                06
+                            </div>
+
+                            <div class="pipeline-info">
+
+                                <strong>
+                                    Continuous Deployment
+                                </strong>
+
+                                <span>
+                                    GitHub Pages deployment completed
+                                </span>
+
+                            </div>
+
+                            <div class="success">
+                                ✓
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             DATASET
+        ====================================================== -->
+
+        <section id="dataset">
+
+            <div class="section-heading">
+
+                <small>
+                    DATA ANALYSIS
+                </small>
+
+                <h2>
+                    Iris Dataset
+                </h2>
+
+                <p>
+                    Dataset used for training and evaluating the classification model.
+                </p>
+
+            </div>
+
+
+            <div class="dataset-grid">
+
+
+                <div class="dataset-visual">
+
+                    <div class="flower">
+                        🌸
+                    </div>
+
+                    <h3>
+                        Iris Classification
+                    </h3>
+
+                    <p>
+                        The project uses the Iris dataset for a
+                        supervised machine learning classification
+                        workflow implemented with Scikit-Learn.
+                    </p>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h3>
+                            Dataset Overview
+                        </h3>
+
+                        <span>
+                            FEATURES
+                        </span>
+
+                    </div>
+
+
+                    <div class="data-bars">
+
+
+                        <div class="data-bar">
+
+                            <div class="bar-top">
+
+                                <span>
+                                    Sepal Length
+                                </span>
+
+                                <strong>
+                                    Feature 01
+                                </strong>
+
+                            </div>
+
+                            <div class="bar-track">
+
+                                <div
+                                    class="bar-fill"
+                                    style="width: 88%;"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="data-bar">
+
+                            <div class="bar-top">
+
+                                <span>
+                                    Sepal Width
+                                </span>
+
+                                <strong>
+                                    Feature 02
+                                </strong>
+
+                            </div>
+
+                            <div class="bar-track">
+
+                                <div
+                                    class="bar-fill"
+                                    style="width: 72%;"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="data-bar">
+
+                            <div class="bar-top">
+
+                                <span>
+                                    Petal Length
+                                </span>
+
+                                <strong>
+                                    Feature 03
+                                </strong>
+
+                            </div>
+
+                            <div class="bar-track">
+
+                                <div
+                                    class="bar-fill"
+                                    style="width: 94%;"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="data-bar">
+
+                            <div class="bar-top">
+
+                                <span>
+                                    Petal Width
+                                </span>
+
+                                <strong>
+                                    Feature 04
+                                </strong>
+
+                            </div>
+
+                            <div class="bar-track">
+
+                                <div
+                                    class="bar-fill"
+                                    style="width: 83%;"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="data-bar">
+
+                            <div class="bar-top">
+
+                                <span>
+                                    Classification
+                                </span>
+
+                                <strong>
+                                    3 Classes
+                                </strong>
+
+                            </div>
+
+                            <div class="bar-track">
+
+                                <div
+                                    class="bar-fill"
+                                    style="width: 100%;"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             TECHNOLOGIES
+        ====================================================== -->
+
+        <section id="technologies">
+
+            <div class="section-heading">
+
+                <small>
+                    TECHNOLOGY STACK
+                </small>
+
+                <h2>
+                    Tools Behind the Pipeline
+                </h2>
+
+                <p>
+                    Technologies used to build, test and deploy the project.
+                </p>
+
+            </div>
+
+
+            <div class="tech-grid">
+
+
+                <div class="tech-card">
+
+                    <div class="tech-icon">
+                        🐍
+                    </div>
+
+                    <strong>
+                        Python
+                    </strong>
+
+                    <span>
+                        Programming
+                    </span>
+
+                </div>
+
+
+                <div class="tech-card">
+
+                    <div class="tech-icon">
+                        🤖
+                    </div>
+
+                    <strong>
+                        Scikit-Learn
+                    </strong>
+
+                    <span>
+                        Machine Learning
+                    </span>
+
+                </div>
+
+
+                <div class="tech-card">
+
+                    <div class="tech-icon">
+                        🧪
+                    </div>
+
+                    <strong>
+                        Pytest
+                    </strong>
+
+                    <span>
+                        Automated Testing
+                    </span>
+
+                </div>
+
+
+                <div class="tech-card">
+
+                    <div class="tech-icon">
+                        ⚙️
+                    </div>
+
+                    <strong>
+                        GitHub Actions
+                    </strong>
+
+                    <span>
+                        CI/CD Automation
+                    </span>
+
+                </div>
+
+
+                <div class="tech-card">
+
+                    <div class="tech-icon">
+                        🌐
+                    </div>
+
+                    <strong>
+                        GitHub Pages
+                    </strong>
+
+                    <span>
+                        Deployment
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ARCHITECTURE
+        ====================================================== -->
+
+        <section class="architecture">
+
+            <div class="section-heading">
+
+                <small>
+                    SYSTEM ARCHITECTURE
+                </small>
+
+                <h2>
+                    From Code to Deployment
+                </h2>
+
+                <p>
+                    Complete flow of the automated ML CI/CD system.
+                </p>
+
+            </div>
+
+
+            <div class="architecture-flow">
+
+
+                <div class="architecture-box">
+
+                    <div class="big">
+                        💻
+                    </div>
+
+                    <strong>
+                        Source Code
+                    </strong>
+
+                    <span>
+                        GitHub Repository
+                    </span>
+
+                </div>
+
+
+                <div class="arrow">
+                    →
+                </div>
+
+
+                <div class="architecture-box">
+
+                    <div class="big">
+                        🧠
+                    </div>
+
+                    <strong>
+                        ML Model
+                    </strong>
+
+                    <span>
+                        Random Forest
+                    </span>
+
+                </div>
+
+
+                <div class="arrow">
+                    →
+                </div>
+
+
+                <div class="architecture-box">
+
+                    <div class="big">
+                        🧪
+                    </div>
+
+                    <strong>
+                        Testing
+                    </strong>
+
+                    <span>
+                        Pytest
+                    </span>
+
+                </div>
+
+
+                <div class="arrow">
+                    →
+                </div>
+
+
+                <div class="architecture-box">
+
+                    <div class="big">
+                        🚀
+                    </div>
+
+                    <strong>
+                        Deployment
+                    </strong>
+
+                    <span>
+                        GitHub Pages
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             SUCCESS STATUS
+        ====================================================== -->
+
+        <div class="success-banner">
+
+            <div class="success-banner-left">
+
+                <div class="success-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <strong>
+                        CI/CD Pipeline Successfully Deployed
+                    </strong>
+
+                    <span>
+                        Continuous Integration passed and Continuous
+                        Deployment completed through GitHub Actions.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="deployment-badge">
+                PRODUCTION READY
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             FOOTER
+        ====================================================== -->
 
         <footer>
-            <strong>ML-CICD-Assignment</strong>
+
+            <div class="footer-name">
+                <strong>
+                    Sasikanthsai Yemineni
+                </strong>
+            </div>
+
+            Register No: <strong>231FA04155</strong>
+
             <br>
-            Automated Machine Learning • Continuous Integration • Continuous Deployment
+
+            Vignan’s Foundation for Science,
+            Technology & Research (VFSTR)
+
+            <br><br>
+
+            Machine Learning CI/CD Assignment
+
+            <br>
+
+            Built with Python • Scikit-Learn • Pytest • GitHub Actions • GitHub Pages
+
         </footer>
 
     </div>
 
+
+    <!-- =========================================================
+         SIMPLE INTERACTION
+    ========================================================= -->
+
+    <script>
+
+        /*
+         * Small entrance animation for dashboard cards.
+         * No external libraries required.
+         */
+
+        const cards =
+            document.querySelectorAll(
+                ".metric-card, .tech-card, .pipeline-step"
+            );
+
+        const observer =
+            new IntersectionObserver(
+                (entries) => {
+
+                    entries.forEach(
+                        (entry) => {
+
+                            if (entry.isIntersecting) {
+
+                                entry.target.style.opacity = "1";
+                                entry.target.style.transform = "translateY(0)";
+
+                            }
+
+                        }
+                    );
+
+                },
+                {
+                    threshold: 0.1
+                }
+            );
+
+
+        cards.forEach(
+            (card) => {
+
+                card.style.opacity = "0";
+                card.style.transform = "translateY(15px)";
+                card.style.transition =
+                    "opacity .6s ease, transform .6s ease";
+
+                observer.observe(card);
+
+            }
+        );
+
+    </script>
+
 </body>
 </html>
+```
