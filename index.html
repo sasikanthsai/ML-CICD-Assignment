@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ML CI/CD Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(0, 255, 200, 0.12), transparent 30%),
+                radial-gradient(circle at 85% 10%, rgba(120, 80, 255, 0.18), transparent 35%),
+                linear-gradient(135deg, #050816, #0b1026 50%, #060812);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background particles */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(1px);
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        .orb.one {
+            width: 180px;
+            height: 180px;
+            background: #00ffd5;
+            top: 15%;
+            left: -70px;
+            animation: float 7s infinite ease-in-out;
+        }
+
+        .orb.two {
+            width: 220px;
+            height: 220px;
+            background: #754cff;
+            right: -80px;
+            bottom: 10%;
+            animation: float 9s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            50% {
+                transform: translateY(-35px) translateX(25px);
+            }
+        }
+
+        .container {
+            width: min(1200px, 92%);
+            margin: auto;
+            padding: 35px 0 60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 45px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #00ffd5, #755cff);
+            font-size: 23px;
+            box-shadow: 0 0 30px rgba(0,255,213,.25);
+        }
+
+        .logo h2 {
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        .status {
+            padding: 10px 18px;
+            border: 1px solid rgba(0,255,180,.35);
+            border-radius: 30px;
+            background: rgba(0,255,180,.08);
+            color: #63ffca;
+            font-size: 14px;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 30px;
+            background: rgba(117,92,255,.12);
+            border: 1px solid rgba(117,92,255,.35);
+            color: #bdb1ff;
+            margin-bottom: 18px;
+            font-size: 13px;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 7vw, 76px);
+            line-height: 1;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #ffffff, #74ffe4, #a999ff);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            color: #aeb8d0;
+            max-width: 700px;
+            margin: auto;
+            line-height: 1.7;
+            font-size: 17px;
+        }
+
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.09);
+            border-radius: 22px;
+            padding: 25px;
+            backdrop-filter: blur(18px);
+            box-shadow: 0 20px 60px rgba(0,0,0,.22);
+            transition: .3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0,255,213,.35);
+            box-shadow: 0 20px 70px rgba(0,255,213,.08);
+        }
+
+        .card .icon {
+            font-size: 25px;
+            margin-bottom: 18px;
+        }
+
+        .card .label {
+            color: #8995b2;
+            font-size: 13px;
+            margin-bottom: 9px;
+        }
+
+        .card h3 {
+            font-size: 21px;
+        }
+
+        /* Main grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.25fr .75fr;
+            gap: 22px;
+        }
+
+        .panel {
+            background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.09);
+            border-radius: 26px;
+            padding: 30px;
+            backdrop-filter: blur(18px);
+        }
+
+        .panel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .panel-title h2 {
+            font-size: 20px;
+        }
+
+        .panel-title span {
+            color: #75819c;
+            font-size: 12px;
+        }
+
+        /* Accuracy */
+        .accuracy-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .circle {
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at center, #10172d 62%, transparent 63%),
+                conic-gradient(#00ffd5 0deg 331deg, rgba(255,255,255,.08) 331deg 360deg);
+            display: grid;
+            place-items: center;
+            box-shadow:
+                0 0 50px rgba(0,255,213,.12),
+                inset 0 0 30px rgba(0,0,0,.4);
+        }
+
+        .accuracy-number {
+            text-align: center;
+        }
+
+        .accuracy-number strong {
+            display: block;
+            font-size: 46px;
+        }
+
+        .accuracy-number small {
+            color: #8190ad;
+        }
+
+        /* Pipeline */
+        .pipeline {
+            display: flex;
+            flex-direction: column;
+            gap: 17px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 16px;
+            background: rgba(255,255,255,.035);
+            border: 1px solid rgba(255,255,255,.07);
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: rgba(0,255,213,.1);
+            color: #59ffd1;
+            border: 1px solid rgba(0,255,213,.25);
+        }
+
+        .step strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .step span {
+            color: #7885a1;
+            font-size: 12px;
+        }
+
+        .check {
+            margin-left: auto;
+            color: #59ffd1;
+            font-size: 18px;
+        }
+
+        /* Tech stack */
+        .tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .tech span {
+            padding: 9px 13px;
+            border-radius: 12px;
+            background: rgba(117,92,255,.1);
+            border: 1px solid rgba(117,92,255,.22);
+            color: #c4bcff;
+            font-size: 12px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            color: #65718c;
+            margin-top: 40px;
+            font-size: 13px;
+        }
+
+        footer strong {
+            color: #9aa7c2;
+        }
+
+        @media (max-width: 900px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 550px) {
+            header {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .circle {
+                width: 200px;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="orb one"></div>
+    <div class="orb two"></div>
+
+    <div class="container">
+
+        <header>
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <h2>ML CI/CD LAB</h2>
+            </div>
+
+            <div class="status">
+                ● PIPELINE READY
+            </div>
+        </header>
+
+        <section class="hero">
+
+            <div class="badge">
+                MACHINE LEARNING • AUTOMATED DEPLOYMENT
+            </div>
+
+            <h1>ML Pipeline<br>Dashboard</h1>
+
+            <p>
+                An automated machine learning workflow powered by
+                Python, Scikit-Learn, Pytest and GitHub Actions.
+            </p>
+
+        </section>
+
+        <!-- Information Cards -->
+
+        <section class="cards">
+
+            <div class="card">
+                <div class="icon">🤖</div>
+                <div class="label">MODEL</div>
+                <h3>Random Forest</h3>
+            </div>
+
+            <div class="card">
+                <div class="icon">🌸</div>
+                <div class="label">DATASET</div>
+                <h3>Iris Dataset</h3>
+            </div>
+
+            <div class="card">
+                <div class="icon">🧪</div>
+                <div class="label">TESTING</div>
+                <h3>Pytest</h3>
+            </div>
+
+            <div class="card">
+                <div class="icon">🚀</div>
+                <div class="label">DEPLOYMENT</div>
+                <h3>GitHub Pages</h3>
+            </div>
+
+        </section>
+
+        <section class="main-grid">
+
+            <!-- Accuracy -->
+
+            <div class="panel">
+
+                <div class="panel-title">
+                    <h2>Model Performance</h2>
+                    <span>TEST ACCURACY</span>
+                </div>
+
+                <div class="accuracy-area">
+
+                    <div class="circle">
+
+                        <div class="accuracy-number">
+                            <strong>93.33%</strong>
+                            <small>Accuracy</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="tech">
+
+                    <span>Python</span>
+                    <span>Scikit-Learn</span>
+                    <span>Random Forest</span>
+                    <span>Iris</span>
+
+                </div>
+
+            </div>
+
+            <!-- Pipeline -->
+
+            <div class="panel">
+
+                <div class="panel-title">
+                    <h2>CI/CD Pipeline</h2>
+                    <span>STATUS</span>
+                </div>
+
+                <div class="pipeline">
+
+                    <div class="step">
+                        <div class="step-icon">✓</div>
+
+                        <div>
+                            <strong>Checkout</strong>
+                            <span>Source code retrieved</span>
+                        </div>
+
+                        <div class="check">✓</div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-icon">✓</div>
+
+                        <div>
+                            <strong>Python Setup</strong>
+                            <span>Environment configured</span>
+                        </div>
+
+                        <div class="check">✓</div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-icon">✓</div>
+
+                        <div>
+                            <strong>Install Dependencies</strong>
+                            <span>Packages installed</span>
+                        </div>
+
+                        <div class="check">✓</div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-icon">✓</div>
+
+                        <div>
+                            <strong>ML Tests</strong>
+                            <span>Pytest execution</span>
+                        </div>
+
+                        <div class="check">✓</div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-icon">🚀</div>
+
+                        <div>
+                            <strong>Deployment</strong>
+                            <span>GitHub Pages</span>
+                        </div>
+
+                        <div class="check">✓</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <footer>
+            <strong>ML-CICD-Assignment</strong>
+            <br>
+            Automated Machine Learning • Continuous Integration • Continuous Deployment
+        </footer>
+
+    </div>
+
+</body>
+</html>
